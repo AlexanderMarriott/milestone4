@@ -4,35 +4,26 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=254, bd_index=True)
-
+    name = models.CharField(max_length=254, db_index=True)
     slug = models.SlugField(max_length=254, unique=True)
 
     class Meta:
         verbose_name_plural = "Categories"
 
-
     def __str__(self):
         return self.name
-    
+
 
 class Product(models.Model):
-
     title = models.CharField(max_length=254)
-
-    brand = models.CharField(max_length=254 default="Un-branded")
-
+    brand = models.CharField(max_length=254, default="Un-branded")
     description = models.TextField(blank=True)
-
     slug = models.SlugField(max_length=254)
-
-    price = models.DecimalField(max_digits=4, decimal_places=2)
-
-    #image = models.ImageField(upload_to="images/")
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    # image = models.ImageField(upload_to="images/")
 
     class Meta:
         verbose_name_plural = "Products"
-
 
     def __str__(self):
         return self.title
