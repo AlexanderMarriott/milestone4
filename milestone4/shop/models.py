@@ -15,6 +15,10 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+
+    category = models.ForeignKey(
+        Category, related_name="product", on_delete=models.CASCADE, null=True
+    )
     title = models.CharField(max_length=254)
     brand = models.CharField(max_length=254, default="Un-branded")
     description = models.TextField(blank=True)
