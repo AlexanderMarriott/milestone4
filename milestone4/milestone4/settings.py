@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "shop",  # django app created for the project
     "basket",  # django app created for the project
+    'mathfilters',  # django app for math operations
 ]
 
 MIDDLEWARE = [
