@@ -1,3 +1,8 @@
+from decimal import Decimal
+
+from shop.models import Product
+
+
 class Basket:
 
     def __init__(self, request):
@@ -30,3 +35,21 @@ class Basket:
 
     def __len__(self):
         return sum(item["quantity"] for item in self.basket.values())
+
+    def __iter__(self):
+
+        all_product_ids = self.basket.keys()
+
+        products = Product.objects.filter(id__in=all_product_ids)
+
+        basket = self.basket.copy()
+
+        for product in products:
+            basket[str(product.id)]["product"] = product
+
+        for item in basket.values():
+            item["price"] = Decimal(item["price"])
+            item["total_price"] = item["price"] * item["quantity"]
+            yield item
+
+
