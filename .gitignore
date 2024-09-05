@@ -1,1 +1,15 @@
+# Ignore virtual environment directories
 env/
+
+# Ignore all __pycache__ directories
+__pycache__/
+**/__pycache__/
+
+# Ignore all .pyc files
+*.pyc
+
+# Ignore SQLite database files
+*.sqlite3
+
+# Ignore specific files (if needed)
+milestone4/db.sqlite3
