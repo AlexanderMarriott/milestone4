@@ -52,4 +52,8 @@ class Basket:
             item["total_price"] = item["price"] * item["quantity"]
             yield item
 
+    def get_total_price(self):
+        return sum(
+            Decimal(item["price"]) * item["quantity"] for item in self.basket.values()
+        )
 
