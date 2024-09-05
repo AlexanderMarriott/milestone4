@@ -1,10 +1,7 @@
-from django.shortcuts import render
-
-from .basket import basket
-
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from .basket import Basket  # Ensure this import is correct
 from shop.models import Product
-
-from django.shortcuts import get_object_or_404
 
 
 def basket_summary(request):
@@ -12,15 +9,29 @@ def basket_summary(request):
 
 
 def basket_add(request):
-    basket = basket(request)
+    if request.POST.get("action") == "post":
+        product_id = int(request.POST.get("product_id"))
+        quantity = int(request.POST.get("quantity"))
 
-    if request.post.get("action") == "post":
-        product_id = int(request.post.get("product_id"))
-        quantity = int(request.post.get("quantity"))
+        # Initialize the basket
+        basket = Basket(request)
 
+        # Get the product
         product = get_object_or_404(Product, id=product_id)
 
+        # Add the product to the basket
         basket.add(product=product, quantity=quantity)
+
+        # Return a JSON response
+        response = JsonResponse(
+            {
+                "The product is called": product.title,
+                "and the product quantity is": quantity,
+            }
+        )
+        return response
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 def basket_delete(request):
