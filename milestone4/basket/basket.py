@@ -1,4 +1,4 @@
-class basket:
+class Basket:
 
     def __init__(self, request):
 
