@@ -5,7 +5,10 @@ from shop.models import Product
 
 
 def basket_summary(request):
-    return render(request, "basket/basket_summary.html")
+
+    basket = Basket(request)
+
+    return render(request, "basket/basket_summary.html", {"basket": basket})
 
 
 def basket_add(request):
