@@ -1,4 +1,6 @@
 // app.js
+
+
 $(document).on('click', '#add-button', function (e) {
     e.preventDefault();
     $.ajax({
@@ -11,7 +13,8 @@ $(document).on('click', '#add-button', function (e) {
             action: 'post'
         },
         success: function (json) {
-            console.log(json);
+            //console.log(json);
+            document.getElementById('basket-qty').textContent = json.qty;
         },
         error: function (xhr, errmsg, err) {
             // Handle error
