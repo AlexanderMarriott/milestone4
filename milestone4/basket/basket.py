@@ -11,3 +11,19 @@ class basket:
             basket = request.session["sKey"] = {}
 
         self.basket = basket
+
+    def add(self, product, quantity):
+        product_id = product.id
+
+        # If the product is not in the basket, add it
+        if product_id not in self.basket:
+            self.basket[product_id] = {
+                "price": str(product.price),
+                "quantity": quantity,
+            }
+
+        # If the product is in the basket, update the quantity
+        else:
+            self.basket[product_id]["quantity"] = quantity
+
+        self.session.modified = True
