@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "shop",  # django app created for the project
+    "basket",  # django app created for the project
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "shop.views.categories",  # added to context_processors
+                "basket.context_processors.basket",  # added to context_processors
             ],
         },
     },
