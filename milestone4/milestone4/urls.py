@@ -23,8 +23,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    # Django admin
     path("admin/", admin.site.urls),
+    # shop app
     path("", include("shop.urls")),
+    # basket app
+    path("basket/", include("basket.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
