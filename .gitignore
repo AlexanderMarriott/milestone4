@@ -13,3 +13,5 @@ __pycache__/
 
 # Ignore specific files (if needed)
 milestone4/db.sqlite3
+
+.prettierrc
