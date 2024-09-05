@@ -27,3 +27,6 @@ class Basket:
             self.basket[product_id]["quantity"] = quantity
 
         self.session.modified = True
+
+    def __len__(self):
+        return sum(item["quantity"] for item in self.basket.values())
