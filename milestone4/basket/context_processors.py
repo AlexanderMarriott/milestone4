@@ -1,4 +1,4 @@
-from .basket import basket as gbasket
+from .basket import Basket as gbasket
 
 
 def basket(request):
