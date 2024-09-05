@@ -98,9 +98,11 @@
 
 </div>
 
-<script src="{% static 'milestone4/static/js/app.js' %}">
-
+<script>
+    var basketAddUrl = "{% url 'basket_add' %}";
+    var csrfToken = "{{ csrf_token }}";
 </script>
+<script src="{% static 'js/app.js' %}"></script>
 
 
 {% endblock %}
