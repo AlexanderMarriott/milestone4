@@ -22,11 +22,12 @@ def basket_add(request):
         # Add the product to the basket
         basket.add(product=product, quantity=quantity)
 
+        basket_quantity = basket.__len__()
+
         # Return a JSON response
         response = JsonResponse(
             {
-                "The product is called": product.title,
-                "and the product quantity is": quantity,
+                "qty": basket_quantity,
             }
         )
         return response
