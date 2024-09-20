@@ -33,6 +33,17 @@ class Basket:
 
         self.session.modified = True
 
+
+
+
+
+    def delete(self, product):
+        product_id = str(product)
+
+        if product_id in self.basket:
+            del self.basket[product_id]
+            self.session.modified = True
+
     def __len__(self):
         return sum(item["quantity"] for item in self.basket.values())
 
