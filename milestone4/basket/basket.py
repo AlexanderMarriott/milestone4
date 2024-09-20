@@ -44,6 +44,14 @@ class Basket:
             del self.basket[product_id]
             self.session.modified = True
 
+
+    def update(self, product, quantity):
+        product_id = str(product)
+        product_quantity = quantity
+        if product_id in self.basket:
+            self.basket[product_id]["quantity"] = product_quantity
+            self.session.modified = True
+
     def __len__(self):
         return sum(item["quantity"] for item in self.basket.values())
 
