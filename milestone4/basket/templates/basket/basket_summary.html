@@ -63,7 +63,7 @@
 
                 &nbsp;
 
-                <select id="">
+                <select id="select{{product.id}}">
 
                   <option selected>
 
@@ -133,6 +133,7 @@
 <script>
   var basketDeleteUrl = "{% url 'basket_delete' %}";
   var csrfToken = "{{ csrf_token }}";
+  var basketUpdateUrl = "{% url 'basket_update' %}";
 </script>
 
 {% endblock %}
