@@ -61,7 +61,9 @@ class Basket:
 
         products = Product.objects.filter(id__in=all_product_ids)
 
-        basket = self.basket.copy()
+        import copy 
+
+        basket = copy.deepcopy(self.basket)
 
         for product in products:
             basket[str(product.id)]["product"] = product
