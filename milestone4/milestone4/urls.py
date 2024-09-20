@@ -29,6 +29,9 @@ urlpatterns = [
     path("", include("shop.urls")),
     # basket app
     path("basket/", include("basket.urls")),
+
+    # useraccount app
+    path("useraccount/", include("useraccount.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
