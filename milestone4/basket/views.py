@@ -63,4 +63,22 @@ def basket_delete(request):
 
 
 def basket_update(request):
-    pass
+    basket = Basket(request)
+
+    if request.POST.get("action") == "post":
+
+        product_id = int(request.POST.get("product_id"))
+        product_quantity = int(request.POST.get("product_quantity"))
+
+        basket.update(product=product_id, quantity=product_quantity)
+
+        basket_quantity = basket.__len__()
+
+        basket_total = basket.get_total_price()
+
+        response = JsonResponse({
+            'qty':basket_quantity,
+            'total': basket_total
+        })
+
+        return response
