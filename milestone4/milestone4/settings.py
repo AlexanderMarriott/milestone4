@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     "useraccount",  # django app created for the project
 
     'mathfilters',  # django app for math operations
+    'crispy_forms',  # django app for forms
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
