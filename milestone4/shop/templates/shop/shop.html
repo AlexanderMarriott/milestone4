@@ -58,7 +58,9 @@
 
             <div class="col">
                 <div class="card shadow-sm h-100">
-                    <img class="img-fluid" alt="Responsive image" src="{{product.image.url}}">
+                    <div class="image-wrapper">
+                        <img class="img-fluid product-image" alt="Responsive image" src="{{product.image.url}}">
+                    </div>
                     <div class="card-body">
                         <p class="card-text">
                             <a class="text-info text-decoration-none" href="{{ product.get_absolute_url }}">
