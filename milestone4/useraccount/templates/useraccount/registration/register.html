@@ -1,1 +1,41 @@
-<h1>Register</h1>
+{% include "shop/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+ <body>
+    <br>
+    <div class="container bg-white shadow-md p-5">
+
+        <h3>Create your account</h3>
+
+        <h5>Purchase items from local sellers with ease!</h5>
+
+        <br>
+        <br>
+
+        <form method='POST' autocomplete="off">
+            {% csrf_token %}
+
+            {{form.username|as_crispy_field}}
+            <br>
+            {{form.email|as_crispy_field}}
+            <br>
+            {{form.password1|as_crispy_field}}
+            <br>
+            {{form.password2|as_crispy_field}}
+            <br>
+
+
+            <button type="submit" class="btn btn-secondary btn-lg w-100 btn-block p-2">
+                &nbsp; Register &nbsp;
+            </button>
+
+
+
+        </form>
+    </div>
+ </body>
+{% endblock %}
