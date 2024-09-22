@@ -9,7 +9,7 @@ def register(request):
         form = UserAccountForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('')
+            return redirect('shop')
         
     context = {'form': form}
         
