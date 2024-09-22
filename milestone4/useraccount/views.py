@@ -1,8 +1,16 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from .forms import UserAccountForm
 
 def register(request):
-    try:
-        return render(request, 'useraccount/registration/register.html')
-    except Exception as e:
-        return HttpResponse(f"Error: {e}")
+
+    form = UserAccountForm()
+
+    if request.method == 'POST':
+        form = UserAccountForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('')
+        
+    context = {'form': form}
+        
+    return render(request, 'useraccount/registration/register.html', context=context)
