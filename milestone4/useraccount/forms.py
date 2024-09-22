@@ -15,6 +15,10 @@ class UserAccountForm(UserCreationForm):
         super(UserAccountForm, self).__init__(*args, **kwargs)
 
 
+        # set email field to required
+        self.fields['email'].required = True
+
+
     # Validate the email field
 
     def clean_email(self):
@@ -22,8 +26,8 @@ class UserAccountForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Email is already in use")
         
-        if len (email) < 6:
+        if len (email) <= 6:
             raise forms.ValidationError("Email is too short")
-        elif len(email) > 50:
+        elif len(email) >= 150:
             raise forms.ValidationError("Email is too long")
         return email
