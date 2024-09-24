@@ -1,1 +1,17 @@
-<h1>Email has not been successfully verified!</h1>
+{% include "shop/base.html" %} {% load static %} {% block content %}
+
+<body id="register-body">
+  <br />
+  <div class="flex-container">
+    <div
+      class="container bg-white shadow-md p-5 center-align verification-layout"
+    >
+      <i class="fa-solid fa-face-frown fa-3x text-danger"></i>
+      <br><br>
+      <h5>Email verification unsuccessful</h5>
+      <hr>
+      <p>Please contact support or try again with a different email.</p>
+    </div>
+  </div>
+</body>
+{% endblock %}
