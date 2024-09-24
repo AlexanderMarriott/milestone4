@@ -1,3 +1,19 @@
-<h1>Email has been successfully verified!</h1>
+{% include "shop/base.html" %} {% load static %} {% block content %}
 
-<h3>Welcome to EasyStreet!</h3>
+<body id="register-body">
+  <br />
+  <div class="flex-container">
+    <div
+      class="container bg-white shadow-md p-5 center-align verification-layout"
+    >
+      <i class="fa-regular fa-face-smile-beam fa-3x text-success"></i>
+
+      <br><br>
+
+      <h5>Your email has been verified successfully!!</h5>
+      <hr>
+      <p>Please log in to use our service.</p>
+    </div>
+  </div>
+</body>
+{% endblock %}
