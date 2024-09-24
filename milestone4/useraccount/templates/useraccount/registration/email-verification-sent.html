@@ -1,3 +1,17 @@
-<h1>A verification has been sent</h1>
+{% include "shop/base.html" %} {% load static %} {% block content %}
 
-<p>check your email</p>
+<body id="register-body">
+  <br />
+  <div class="flex-container">
+    <div
+      class="container bg-white shadow-md p-5 center-align verification-layout"
+    >
+      <i class="fa-solid fa-envelope fa-3x"></i>
+      <br><br>
+      <h5>A verification link has been sent to your email</h5>
+      <hr />
+      <p>Please check your inbox and junk folders.</p>
+    </div>
+  </div>
+</body>
+{% endblock %}
