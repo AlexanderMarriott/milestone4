@@ -1,0 +1,27 @@
+{% include "shop/base.html" %} {% load static %} {% load crispy_forms_tags %} {%
+block content %}
+<body id="register-body">
+  <div class="flex-container">
+    <div class="container bg-white shadow-md p-5 verification-layout">
+      <h3>Log in to your account</h3>
+
+      <br />
+      <br />
+
+      <form method="POST" autocomplete="off">
+        {% csrf_token %} {{form.username|as_crispy_field}}
+        <br />
+        {{form.password|as_crispy_field}}
+        <br />
+
+        <button
+          type="submit"
+          class="btn btn-secondary btn-lg w-100 btn-block p-2"
+        >
+          &nbsp; Login &nbsp;
+        </button>
+      </form>
+    </div>
+  </div>
+</body>
+{% endblock %}
