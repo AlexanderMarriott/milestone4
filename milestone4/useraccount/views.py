@@ -10,6 +10,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login, logout
 
+from django.contrib.auth.decorators import login_required
+
 def register(request):
     form = UserAccountForm()
 
@@ -69,14 +71,27 @@ def my_login(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+            keep_me_logged_in = form.cleaned_data.get('keep_me_logged_in')
 
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
+                if keep_me_logged_in:
+                    request.session.set_expiry(1209600)  # 2 weeks
+                else:
+                    request.session.set_expiry(0)  # Browser close
                 auth.login(request, user)
-                return redirect('')
+                return redirect('dashboard')
             else:
                 form.add_error(None, 'Invalid username or password')
             
     context = {'form': form}
     return render(request, 'useraccount/my-login.html', context=context)
+
+def user_logout(request):
+    logout(request)
+    return redirect('shop')
+
+@login_required(login_url='my-login')
+def dashboard(request):
+    return render(request, 'useraccount/dashboard.html')
