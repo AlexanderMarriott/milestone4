@@ -1,5 +1,5 @@
-{% include "shop/base.html" %} {% load static %} {% load crispy_forms_tags %} {%
-block content %}
+{% include "shop/base.html" %} {% load static %} {% load crispy_forms_tags %} 
+{% block content %}
 <body id="register-body">
   <div class="flex-container">
     <div class="container bg-white shadow-md p-5 verification-layout">
@@ -13,7 +13,11 @@ block content %}
         <br />
         {{form.password|as_crispy_field}}
         <br />
-
+        <label for="id_keep_me_logged_in">
+          <input type="checkbox" name="keep_me_logged_in" id="id_keep_me_logged_in">
+          Keep me logged in
+        </label>
+        <br>
         <button
           type="submit"
           class="btn btn-secondary btn-lg w-100 btn-block p-2"
