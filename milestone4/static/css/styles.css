@@ -38,6 +38,7 @@
 .flex-container {
     display: flex;
     justify-content: center; /* Center horizontally */
-    align-items: center;    /* Center vertically */
-    height: 85vh;          /* set viewport height */
+    height: auto;          /* set viewport height */
+    flex-direction: column;
+    gap: 20px;
 }
