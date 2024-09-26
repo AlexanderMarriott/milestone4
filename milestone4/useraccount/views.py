@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from .forms import UserAccountForm, LoginForm
+from .forms import UserAccountForm, LoginForm, UserUpdateForm
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from .token import user_tokenizer_generate
@@ -95,3 +95,30 @@ def user_logout(request):
 @login_required(login_url='my-login')
 def dashboard(request):
     return render(request, 'useraccount/dashboard.html')
+
+@login_required(login_url='my-login')
+def profile_management(request):
+
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+        
+    form = UserUpdateForm(instance=request.user)
+
+    context = {'form': form}
+
+
+    return render(request, 'useraccount/profile-management.html', context=context)
+
+
+@login_required(login_url='my-login')
+def delete_account(request):
+    user = User.objects.get(id=request.user.id)
+
+    if request.method == 'POST':
+        user.delete()
+        return redirect('shop')
+
+    return render(request, 'useraccount/delete-account.html')
