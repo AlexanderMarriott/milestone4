@@ -4,32 +4,58 @@
 
 
 
-<body>
-    <div class="container bg-info shadow-md p-5 form-layout">
+<body id="register-body">
+    <br>
+    <br>
+    <div class="container bg-white shadow-md p-5 form-layout">
 
-        <h3>Dashboard</h3>
+        <h3>Welcome, {{ user.username }}</h3>
+        <hr>
 
-        <br />
-        <br />
 
         <div class="row">
-            <div class="col-md-6">
-                <h4>Account Information</h4>
-                <br />
-                <p>Username: {{ user.username }}</p>
-                <p>Email: {{ user.email }}</p>
-                <p>First Name: {{ user.first_name }}</p>
-                <p>Last Name: {{ user.last_name }}</p>
+            <div class="col">
+                This is your dashboard. From here you can:
+                <li>Track your orders</li>
+                <li>Manage your account</li>
             </div>
-            <div class="col-md-6">
-                <h4>Order History</h4>
-                <br />
-                <p>Order 1</p>
-                <p>Order 2</p>
-                <p>Order 3</p>
-            </div>
+        
         </div>
     </div>
+
+    <br>
+
+    <div class="container bg-white shadow-md p-5 form-layout">
+
+        <h3>Track your orders</h3>
+        <hr>
+      
+
+        <p>Keep track of your order here...</p>
+
+        <button type="submit" class="btn btn-primary btn-md  btn-block p-2">
+             &nbsp; My Orders &nbsp;
+        </button>
+    </div>
+
+    <br>
+
+    <div class="container bg-white shadow-md p-5 form-layout">
+
+        <h3>Manage your account</h3>
+        <hr>
+
+        <p>Update or delete your account</p>
+
+        <a href="{% url 'profile-management' %}">
+            <button type="button" class="btn btn-primary btn-md  btn-block p-2">
+                &nbsp; Manage account &nbsp;
+            </button>
+        </a>
+
+    </div>
+
+    <br>
 </body>
 
 {% endblock %}
