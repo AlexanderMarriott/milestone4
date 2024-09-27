@@ -89,7 +89,17 @@ def my_login(request):
     return render(request, 'useraccount/my-login.html', context=context)
 
 def user_logout(request):
-    logout(request)
+
+    try:
+       
+        for key in list(request.session.keys()):
+            if key == 'sKey':
+                continue
+            else:
+                del request.session[key]
+    except KeyError:
+        pass
+
     return redirect('shop')
 
 @login_required(login_url='my-login')
