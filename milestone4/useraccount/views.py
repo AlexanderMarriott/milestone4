@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 
@@ -100,6 +101,8 @@ def user_logout(request):
     except KeyError:
         pass
 
+    messages.success(request, 'You have been logged out')
+
     return redirect('shop')
 
 @login_required(login_url='my-login')
@@ -115,6 +118,9 @@ def profile_management(request):
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+
+            messages.success(request, 'Your profile has been updated')
+            
             return redirect('dashboard')
         
  
@@ -131,6 +137,9 @@ def delete_account(request):
 
     if request.method == 'POST':
         user.delete()
+
+        messages.error(request, 'Your account has been deleted')
+
         return redirect('shop')
 
     return render(request, 'useraccount/delete-account.html')
