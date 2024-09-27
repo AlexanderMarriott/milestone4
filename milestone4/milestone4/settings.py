@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "shop",  # django app created for the project
     "basket",  # django app created for the project
     "useraccount",  # django app created for the project
+    "payments",  # django app created for the project
 
     'mathfilters',  # django app for math operations
     'crispy_forms',  # django app for forms
