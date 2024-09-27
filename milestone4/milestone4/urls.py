@@ -32,6 +32,9 @@ urlpatterns = [
 
     # useraccount app
     path("useraccount/", include("useraccount.urls")),
+
+    # payments app
+    path("payments/", include("payments.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
