@@ -99,13 +99,15 @@ def dashboard(request):
 @login_required(login_url='my-login')
 def profile_management(request):
 
+    form = UserUpdateForm(instance=request.user)
+
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect('dashboard')
         
-    form = UserUpdateForm(instance=request.user)
+ 
 
     context = {'form': form}
 
