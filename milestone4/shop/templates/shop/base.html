@@ -176,6 +176,49 @@
 
 </nav>
 
+<br>
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+
+            <div class="d-flex justify-content-center align-items-center">
+
+                <div id="timed-message" class="alert alert-success text-center alert-dismissible fade show" style="max-width:90%" role="alert">
+
+                    {{ message }}
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+
+            <div id="timed-message" class="d-flex justify-content-center align-items-center">
+
+                <div class="alert alert-danger text-center alert-dismissible fade show" style="max-width:90%" role="alert">
+
+                    {{ message }}
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    {% endfor %}
+
+{% endif %}
+
+
 
 <body>
 
@@ -192,9 +235,11 @@
     {% endblock %}
 
 
-    <script src="{% static 'js/app.js' %}"></script>
+    
 
 </body>
 
+    <script src="{% static 'js/app.js' %}"></script>
 
+    
 </html>
