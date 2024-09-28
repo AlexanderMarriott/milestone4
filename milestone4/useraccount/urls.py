@@ -43,7 +43,9 @@ urlpatterns = [
 
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(template_name="useraccount/password/password-reset-complete.html"), name='password_reset_complete'),
 
+    #manage-shipping
 
+    path('shipping', views.manage_shipping, name='shipping'),
         
 
 
