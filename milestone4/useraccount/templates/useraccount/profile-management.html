@@ -27,6 +27,61 @@
     </div>
 
     <div class="container bg-white shadow-md p-5 verification-layout">
+      <h3>Shipping Address</h3>
+      <hr>
+  
+      {% if shipping_address %}
+          <table class="table table-bordered">
+              <tbody>
+                  <tr>
+                      <th scope="row">First Name</th>
+                      <td>{{ shipping_address.first_name }}</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Last Name</th>
+                      <td>{{ shipping_address.last_name }}</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Email</th>
+                      <td>{{ shipping_address.email }}</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Address 1</th>
+                      <td>{{ shipping_address.address1 }}</td>
+                  </tr>
+                  {% if shipping_address.address2 %}
+                  <tr>
+                      <th scope="row">Address 2</th>
+                      <td>{{ shipping_address.address2 }}</td>
+                  </tr>
+                  {% endif %}
+                  <tr>
+                      <th scope="row">City</th>
+                      <td>{{ shipping_address.city }}</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Postal Code</th>
+                      <td>{{ shipping_address.postal_code }}</td>
+                  </tr>
+                  <tr>
+                      <th scope="row">Country</th>
+                      <td>{{ shipping_address.country }}</td>
+                  </tr>
+              </tbody>
+          </table>
+      {% else %}
+          <p>No shipping address available.</p>
+      {% endif %}
+      <div class="d-flex justify-content-center">
+        <a href="{% url 'manage-shipping' %}">
+            <button type="button" class="btn btn-primary btn-md btn-block p-2">
+                &nbsp; Manage shipping &nbsp;
+            </button>
+        </a>
+    </div>
+  </div>
+
+    <div class="container bg-white shadow-md p-5 verification-layout">
       <h3>Delete Account</h3>
 
       <br />
@@ -34,6 +89,8 @@
       <a class="btn btn-danger navbar-btn text-white" href="{% url 'delete-account' %}">Delete your account</a>
     </div>
   </div>
+
+  <br><br>
 </body>
 {% endblock %}
 
