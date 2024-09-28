@@ -111,10 +111,21 @@
     {% endwith %}
 
     {% endfor %}
-
+    <br>
     <div class="col-12 text-end">
 
       <div class="h6 fw-bold"> Sub total: £ <div id="total" class="d-inline-flex"> {{basket.get_total_price}} </div>
+       
+      </div>
+
+    </div>
+    <br>
+    <div class="col-12 text-end">
+
+      <div class="h6 fw-bold"> <a href="{% url 'checkout' %}"> <button type="button" class="btn btn-primary btn-md btn-block p-2">
+        &nbsp; Checkout Securely &nbsp;<i class="fa-solid fa-lock"></i>
+    </button> </a> 
+      
       </div>
 
     </div>
