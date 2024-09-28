@@ -7,41 +7,46 @@
             <br>
             <br>
             <div class="container bg-white shadow-md p-5 verification-layout">
-            <h3>Log in to your account</h3>
-        
-            <br />
-            <br />
-        
-            <form method="POST" autocomplete="off">
-                {% csrf_token %} {{form.username|as_crispy_field}}
+                <h3>Manage shipping address</h3>
+
+                
+            
                 <br />
-                {{form.password|as_crispy_field}}
                 <br />
-                <label for="id_keep_me_logged_in">
-                <input type="checkbox" name="keep_me_logged_in" id="id_keep_me_logged_in">
-                Keep me logged in
-                </label>
+            
+                <form method="POST" autocomplete="off">
+                    {% csrf_token %} 
+                    
+                    {{form.first_name|as_crispy_field}}
+                    <br />
+                    {{form.last_name|as_crispy_field}}
+                    <br />
+                    {{form.email|as_crispy_field}}
+                    <br />
+                    {{form.address1|as_crispy_field}}
+                    <br />
+                    {{form.address2|as_crispy_field}}
+                    <br />
+                    {{form.city|as_crispy_field}}
+                    <br />
+                    {{form.postal_code|as_crispy_field}}
+                    <br />
+                    {{form.country|as_crispy_field}}
+
+                    
+                    <br>
+                    <button
+                    type="submit"
+                    class="btn btn-secondary btn-lg w-100 btn-block p-2"
+                    >
+                    &nbsp; Update shipping address &nbsp;
+                    </button>
+                </form>
                 <br>
-                <button
-                type="submit"
-                class="btn btn-secondary btn-lg w-100 btn-block p-2"
-                >
-                &nbsp; Login &nbsp;
-                </button>
-            </form>
-            <br>
         
-            {{form.non_field_errors}}
-            <br>
-            <div class="text-center">
-                <a href="{% url 'register' %}" >Don't have an account?</a>
-        
-                <br>
-                <br>
-                <a href="{% url 'reset_password' %}">forgotten your password?</a>
-        
-            </div>
             </div>
         </div>
     </body>
+
+    <br> <br>
 {% endblock %}
