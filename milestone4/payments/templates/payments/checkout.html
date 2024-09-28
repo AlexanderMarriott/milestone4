@@ -16,6 +16,8 @@
 
             <form id="form">
 
+                {% csrf_token %}
+
                 <div>
 
                     <h3> <i class="fa fa-chevron-circle-right" aria-hidden="true"></i> &nbsp; Complete your order </h3>
@@ -89,7 +91,7 @@
 
                     <div class="form-field">
 
-                        <input class="form-control" id="state" type="text" placeholder="Postal code*" autocomplete="off" value="{{shipping.postal_code}}" required>
+                        <input class="form-control" id="postal_code" type="text" placeholder="Postal code*" autocomplete="off" value="{{shipping.postal_code}}" required>
 
                     </div>
 
@@ -99,7 +101,7 @@
 
                     <div class="form-field">
 
-                        <input class="form-control" id="zipcode" type="text" placeholder="Country" autocomplete="off" value="{{shipping.country}}" required>
+                        <input class="form-control" id="country" type="text" placeholder="Country" autocomplete="off" value="{{shipping.country}}" required>
 
                     </div>
             
@@ -136,7 +138,10 @@
 
     <script>
 
-
+        var completeOrderUrl = "{% url 'complete-order' %}";
+        var paymentSuccessUrl = "{% url 'payment-success' %}";
+        var paymentFailedUrl = "{% url 'payment-failed' %}";
+        var csrfToken = "{{ csrf_token }}";
     
 
 
