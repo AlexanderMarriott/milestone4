@@ -1,5 +1,9 @@
 from django.shortcuts import redirect, render
 from .forms import UserAccountForm, LoginForm, UserUpdateForm
+
+from payments.forms import ShippingForm
+from payments.models import ShippingAddress
+
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from .token import user_tokenizer_generate
@@ -8,7 +12,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from django.contrib.auth.models import auth
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
@@ -143,3 +147,35 @@ def delete_account(request):
         return redirect('shop')
 
     return render(request, 'useraccount/delete-account.html')
+
+#shipping address
+
+@login_required(login_url='my-login')
+def manage_shipping(request):
+    try:
+        # Get the shipping address for the current user
+        shipping_address = ShippingAddress.objects.get(user=request.user.id)
+
+    except ShippingAddress.DoesNotExist:
+
+        # account does not have a shipping address
+        shipping_address = None
+
+    form = ShippingForm(instance=shipping_address)
+
+
+    if request.method == 'POST':
+        form = ShippingForm(request.POST, instance=shipping_address)
+        if form.is_valid():
+
+            #assign the user to the shipping address
+            shipping_user = form.save(commit=False)
+            #adding foreign key to user
+            shipping_user.user = request.user
+            shipping_user.save()
+            messages.success(request, 'Your shipping address has been updated')
+            return redirect('dashboard')
+
+    context = {'form': form}
+
+    return render(request, 'useraccount/manage-shipping.html', context=context)
