@@ -45,7 +45,7 @@ urlpatterns = [
 
     #manage-shipping
 
-    path('shipping', views.manage_shipping, name='shipping'),
+    path('manage-shipping', views.manage_shipping, name='manage-shipping'),
         
 
 
