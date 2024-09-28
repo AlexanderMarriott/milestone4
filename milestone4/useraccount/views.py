@@ -116,6 +116,14 @@ def dashboard(request):
 @login_required(login_url='my-login')
 def profile_management(request):
 
+    
+    user = request.user
+
+    try:
+        shipping_address = ShippingAddress.objects.get(user=user)
+    except ShippingAddress.DoesNotExist:
+        shipping_address = None
+
     form = UserUpdateForm(instance=request.user)
 
     if request.method == 'POST':
@@ -129,7 +137,10 @@ def profile_management(request):
         
  
 
-    context = {'form': form}
+    context = {
+        'form': form,
+        'shipping_address': shipping_address,
+    }
 
 
     return render(request, 'useraccount/profile-management.html', context=context)
@@ -161,6 +172,9 @@ def manage_shipping(request):
         # account does not have a shipping address
         shipping_address = None
 
+    #prepopulate email field with the user email
+    initial_data = {'email': request.user.email}
+
     form = ShippingForm(instance=shipping_address)
 
 
@@ -174,7 +188,9 @@ def manage_shipping(request):
             shipping_user.user = request.user
             shipping_user.save()
             messages.success(request, 'Your shipping address has been updated')
-            return redirect('dashboard')
+            return redirect('profile-management')
+    else:
+        form = ShippingForm(instance=shipping_address, initial=initial_data)
 
     context = {'form': form}
 
