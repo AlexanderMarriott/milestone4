@@ -11,6 +11,10 @@ urlpatterns = [
 
     path("complete-order/", views.complete_order, name="complete-order"),
 
+    path("create-checkout-session/", views.create_checkout_session, name="create-checkout-session"),
+
+    path('webhook/', views.stripe_webhook, name='stripe_webhook'),
+
 
 
 ]
