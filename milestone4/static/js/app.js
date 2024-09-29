@@ -80,14 +80,7 @@ $(document).on('click', '.update-button', function (e) {
 });
 
 
-// timer for message alerts
 
-var timed_message = document.getElementById('timed-message');
-
-setTimeout(function() {
-    timed_message.style.display = 'none';
-    
-}, 3000);
 
 
 
