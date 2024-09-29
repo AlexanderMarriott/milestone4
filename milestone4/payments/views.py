@@ -110,7 +110,7 @@ def create_checkout_session(request):
                 line_items=[
                     {
                         'price_data': {
-                            'currency': 'usd',
+                            'currency': 'gbp',
                             'product_data': {
                                 'name': 'T-shirt',
                             },
