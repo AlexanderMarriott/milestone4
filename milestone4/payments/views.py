@@ -102,45 +102,8 @@ def create_checkout_session(request):
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-@csrf_exempt
-def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
-
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
-        )
-    except ValueError as e:
-        # Invalid payload
-        print("Invalid payload")
-        return JsonResponse({'status': 'invalid payload'}, status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        print("Invalid signature")
-        return JsonResponse({'status': 'invalid signature'}, status=400)
-
-    # Handle the event
-    print("Event type:", event['type'])
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        print("Checkout session completed:", session)
-        complete_order_logic(session)
-
-    return JsonResponse({'status': 'success'}, status=200)
-
-def complete_order_logic(session):
-    # Extract necessary information from the session metadata
-    order_id = session['metadata']['order_id']
-    order = Order.objects.get(id=order_id)
-    order.payment_status = 'Completed'
-    order.save()
-    print("Order updated successfully")
 
 def payment_success(request):
-    basket = Basket(request)
-    basket.clear()
     return render(request, 'payments/payment-success.html')
 
 def payment_failed(request): 
