@@ -106,23 +106,28 @@ def create_checkout_session(request):
         try:
             print("Request body:", request.body)  # Debugging statement
             data = json.loads(request.body)
+            
+            # Fetch basket items for the user
+            basket = Basket(request)
+            line_items = []
+            for item in basket:
+                line_items.append({
+                    'price_data': {
+                        'currency': 'gbp',
+                        'product_data': {
+                            'name': item['product'].name,
+                        },
+                        'unit_amount': int(item['price'] * 100),  # Stripe expects amount in cents
+                    },
+                    'quantity': item['quantity'],
+                })
+
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
-                line_items=[
-                    {
-                        'price_data': {
-                            'currency': 'gbp',
-                            'product_data': {
-                                'name': 'T-shirt',
-                            },
-                            'unit_amount': 2000,
-                        },
-                        'quantity': 1,
-                    },
-                ],
+                line_items=line_items,
                 mode='payment',
-                success_url=settings.DOMAIN_URL + '/payment-success/',
-                cancel_url=settings.DOMAIN_URL + '/payment-failed/',
+                success_url=settings.DOMAIN_URL + '/payments/payment-success/',
+                cancel_url=settings.DOMAIN_URL + '/payments/payment-failed/',
                 metadata={
                     'first_name': data['first_name'],
                     'last_name': data['last_name'],
@@ -146,4 +151,3 @@ def payment_success(request):
 
 def payment_failed(request): 
     return render(request, 'payments/payment-failed.html')
-
