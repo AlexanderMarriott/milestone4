@@ -34,6 +34,7 @@
                 {% if user.is_authenticated%}
                     <p>(When we say extensive we mean the 4 items we currently have in stock.)</p>
                 {% else %}
+                    <p>Register for a faster checkout experience.</p>
                     <a href="{% url 'register' %}" class="btn btn-primary my-2"> Create an account </a>
                 {% endif %}
 
