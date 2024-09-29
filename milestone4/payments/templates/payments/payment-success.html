@@ -1,1 +1,17 @@
-<h1>Payment Success</h1>
+{% include "shop/base.html" %} {% load static %} {% block content %}
+
+<body id="register-body">
+  <br />
+  <div class="flex-container">
+    <div
+      class="container bg-white shadow-md p-5 center-align verification-layout"
+    >
+      <i class="fa-solid fa-envelope fa-3x"></i>
+      <br><br>
+      <h5>Payment Successful!!</h5>
+      <hr />
+      <p>Thankyou for your purchase!</p>
+    </div>
+  </div>
+</body>
+{% endblock %}
