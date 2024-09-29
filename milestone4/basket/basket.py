@@ -78,7 +78,4 @@ class Basket:
             Decimal(item["price"]) * item["quantity"] for item in self.basket.values()
         )
     
-    def clear(self):
-        del self.session["basket"]
-        self.session.modified = True
 
