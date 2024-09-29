@@ -90,6 +90,6 @@ setTimeout(function() {
 }, 3000);
 
 
-// Complete checkout
+
 
 
