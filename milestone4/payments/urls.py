@@ -9,7 +9,7 @@ urlpatterns = [
 
     path("checkout/", views.checkout, name="checkout"),
 
-    path("complete-order/", views.complete_order, name="complete-order"),
+    path("complete-order/", views.complete_order_logic, name="complete-order"),
 
     path("create-checkout-session/", views.create_checkout_session, name="create-checkout-session"),
 
