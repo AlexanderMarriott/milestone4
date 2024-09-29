@@ -41,6 +41,38 @@ def create_checkout_session(request):
             
             # Fetch basket items for the user
             basket = Basket(request)
+            total_cost = basket.get_total_price()
+
+            # Create the order
+            if request.user.is_authenticated:
+                user = User.objects.get(id=request.user.id)
+                order = Order.objects.create(
+                    first_name=data['first_name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    shipping_address=f"{data['address1']}, {data['address2']}, {data['city']}, {data['country']}, {data['postal_code']}",
+                    amount_paid=total_cost,
+                    user=user
+                )
+            else:
+                order = Order.objects.create(
+                    first_name=data['first_name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    shipping_address=f"{data['address1']}, {data['address2']}, {data['city']}, {data['country']}, {data['postal_code']}",
+                    amount_paid=total_cost
+                )
+
+            # Create order items
+            for item in basket:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item['product'],
+                    quantity=item['quantity'],
+                    price=item['price']
+                )
+
+            # Prepare line items for Stripe
             line_items = []
             for item in basket:
                 line_items.append({
@@ -54,6 +86,7 @@ def create_checkout_session(request):
                     'quantity': item['quantity'],
                 })
 
+            # Create Stripe checkout session
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=line_items,
@@ -61,15 +94,7 @@ def create_checkout_session(request):
                 success_url=settings.DOMAIN_URL + '/payments/payment-success/',
                 cancel_url=settings.DOMAIN_URL + '/payments/payment-failed/',
                 metadata={
-                    'first_name': data['first_name'],
-                    'last_name': data['last_name'],
-                    'email': data['email'],
-                    'address1': data['address1'],
-                    'address2': data['address2'],
-                    'city': data['city'],
-                    'country': data['country'],
-                    'postal_code': data['postal_code'],
-                    'user_id': request.user.id if request.user.is_authenticated else None,
+                    'order_id': order.id,
                 }
             )
             return JsonResponse({'id': checkout_session.id})
@@ -107,52 +132,11 @@ def stripe_webhook(request):
 
 def complete_order_logic(session):
     # Extract necessary information from the session metadata
-    print("Session Metadata:", session['metadata'])
-    first_name = session['metadata']['first_name']
-    last_name = session['metadata']['last_name']
-    email = session['metadata']['email']
-    address1 = session['metadata']['address1']
-    address2 = session['metadata']['address2']
-    city = session['metadata']['city']
-    country = session['metadata']['country']
-    postal_code = session['metadata']['postal_code']
-
-    # Create the order
-    basket = Basket(session)
-    total_cost = basket.get_total_price()
-    print("Total Cost:", total_cost)
-
-    if session['metadata']['user_id']:
-        user = User.objects.get(id=session['metadata']['user_id'])
-        order = Order.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
-            amount_paid=total_cost,
-            user=user
-        )
-    else:
-        order = Order.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
-            amount_paid=total_cost
-        )
-
-    for item in basket:
-        print("Creating OrderItem for:", item)
-        OrderItem.objects.create(
-            order=order,
-            product=item['product'],
-            quantity=item['quantity'],
-            price=item['price'],
-            user=user if session['metadata']['user_id'] else None
-        )
-
-    basket.clear()
-    print("Order and OrderItems created successfully")
+    order_id = session['metadata']['order_id']
+    order = Order.objects.get(id=order_id)
+    order.payment_status = 'Completed'
+    order.save()
+    print("Order updated successfully")
 
 def payment_success(request):
     return render(request, 'payments/payment-success.html')
