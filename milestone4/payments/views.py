@@ -139,6 +139,8 @@ def complete_order_logic(session):
     print("Order updated successfully")
 
 def payment_success(request):
+    basket = Basket(request)
+    basket.clear()
     return render(request, 'payments/payment-success.html')
 
 def payment_failed(request): 
