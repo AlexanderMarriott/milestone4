@@ -31,79 +31,50 @@ def checkout(request):
         }
         return render(request, "payments/checkout.html", context=context)
 
-def complete_order(request):
-    if request.POST.get('action') == 'post':
-        # Get the form data
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        address1 = request.POST.get('address1')
-        address2 = request.POST.get('address2')
-        city = request.POST.get('city')
-        country = request.POST.get('country')
-        postal_code = request.POST.get('postal_code')
+def complete_order_logic(session):
+    # Extract necessary information from the session metadata
+    first_name = session['metadata']['first_name']
+    last_name = session['metadata']['last_name']
+    email = session['metadata']['email']
+    address1 = session['metadata']['address1']
+    address2 = session['metadata']['address2']
+    city = session['metadata']['city']
+    country = session['metadata']['country']
+    postal_code = session['metadata']['postal_code']
 
-        # Create the order
-        basket = Basket(request)
-        total_cost = basket.get_total_price()
+    # Create the order
+    basket = Basket(session)
+    total_cost = basket.get_total_price()
 
-        if request.user.is_authenticated:
-            order = Order.objects.create(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
-                amount_paid=total_cost,
-                user=request.user
-            )
-        else:
-            order = Order.objects.create(
-                first_name=first_name,
-                last_name=last_name,
-                email=email,
-                shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
-                amount_paid=total_cost
-            )
+    if session['metadata']['user_id']:
+        user = User.objects.get(id=session['metadata']['user_id'])
+        order = Order.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
+            amount_paid=total_cost,
+            user=user
+        )
+    else:
+        order = Order.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
+            amount_paid=total_cost
+        )
 
-        for item in basket:
-            OrderItem.objects.create(
-                order=order,
-                product=item['product'],
-                quantity=item['quantity'],
-                price=item['price']
-            )
+    for item in basket:
+        OrderItem.objects.create(
+            order=order,
+            product=item['product'],
+            quantity=item['quantity'],
+            price=item['price']
+        )
 
-        basket.clear()
-        return JsonResponse({'success': True})
+    basket.clear()
 
-def create_checkout_session(request):
-    if request.method == 'POST':
-        try:
-            basket = Basket(request)
-            line_items = []
-            for item in basket:
-                line_items.append({
-                    'price_data': {
-                        'currency': 'gbp',
-                        'product_data': {
-                            'name': item['product'].title,
-                        },
-                        'unit_amount': int(item['price'] * 100),  # Stripe expects amount in cents
-                    },
-                    'quantity': item['quantity'],
-                })
-
-            session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=line_items,
-                mode='payment',
-                success_url=request.build_absolute_uri('/payments/payment-success/'),
-                cancel_url=request.build_absolute_uri('/payments/payment-failed/'),
-            )
-            return JsonResponse({'id': session.id})
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-        
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -124,7 +95,7 @@ def stripe_webhook(request):
     # Handle the event
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        complete_order(session)  # Call your function to handle order completion
+        complete_order_logic(session)  # Call your function to handle order completion
 
     return JsonResponse({'status': 'success'}, status=200)
 
