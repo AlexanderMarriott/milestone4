@@ -37,6 +37,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['easystreet-fcfbb4b54019.herokuapp.com', 'localhost']
 
+DOMAIN_URL = os.getenv('DOMAIN_URL', 'https://easystreet-fcfbb4b54019.herokuapp.com')
+
 
 # Application definition
 
