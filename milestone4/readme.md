@@ -1,4 +1,4 @@
-# Shoe and Shirt Shop
+# EasyStreet
 
 ## Overview
 
