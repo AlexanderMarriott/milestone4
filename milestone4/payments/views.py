@@ -99,6 +99,45 @@ def stripe_webhook(request):
 
     return JsonResponse({'status': 'success'}, status=200)
 
+@csrf_exempt
+def create_checkout_session(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': 'T-shirt',
+                            },
+                            'unit_amount': 2000,
+                        },
+                        'quantity': 1,
+                    },
+                ],
+                mode='payment',
+                success_url=settings.DOMAIN_URL + '/payment-success/',
+                cancel_url=settings.DOMAIN_URL + '/payment-failed/',
+                metadata={
+                    'first_name': data['first_name'],
+                    'last_name': data['last_name'],
+                    'email': data['email'],
+                    'address1': data['address1'],
+                    'address2': data['address2'],
+                    'city': data['city'],
+                    'country': data['country'],
+                    'postal_code': data['postal_code'],
+                    'user_id': request.user.id if request.user.is_authenticated else None,
+                }
+            )
+            return JsonResponse({'id': checkout_session.id})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 def payment_success(request):
     return render(request, 'payments/payment-success.html')
 
