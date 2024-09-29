@@ -115,7 +115,7 @@ def create_checkout_session(request):
                     'price_data': {
                         'currency': 'gbp',
                         'product_data': {
-                            'name': item['product'].name,
+                            'name': item['product'].title,
                         },
                         'unit_amount': int(item['price'] * 100),  # Stripe expects amount in cents
                     },
