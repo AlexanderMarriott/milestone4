@@ -6,6 +6,7 @@ from django.conf import settings
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.models import User
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -80,7 +81,7 @@ def complete_order_logic(session):
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET  # Set this in your settings
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
     try:
         event = stripe.Webhook.construct_event(
@@ -96,7 +97,7 @@ def stripe_webhook(request):
     # Handle the event
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        complete_order_logic(session)  # Call your function to handle order completion
+        complete_order_logic(session)
 
     return JsonResponse({'status': 'success'}, status=200)
 
@@ -104,7 +105,6 @@ def stripe_webhook(request):
 def create_checkout_session(request):
     if request.method == 'POST':
         try:
-            print("Request body:", request.body)  # Debugging statement
             data = json.loads(request.body)
             
             # Fetch basket items for the user
@@ -142,7 +142,6 @@ def create_checkout_session(request):
             )
             return JsonResponse({'id': checkout_session.id})
         except Exception as e:
-            print("Error:", str(e))  # Debugging statement
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
