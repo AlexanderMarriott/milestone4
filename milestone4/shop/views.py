@@ -10,9 +10,6 @@ def store(request):
 
     all_products = Product.objects.all()
 
-    for product in all_products:
-        print(product.image.url)
-
     context = {"all_products": all_products}
 
     return render(request, "shop/shop.html", context)
