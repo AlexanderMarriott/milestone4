@@ -33,74 +33,6 @@ def checkout(request):
         }
         return render(request, "payments/checkout.html", context=context)
 
-def complete_order_logic(session):
-    # Extract necessary information from the session metadata
-    first_name = session['metadata']['first_name']
-    last_name = session['metadata']['last_name']
-    email = session['metadata']['email']
-    address1 = session['metadata']['address1']
-    address2 = session['metadata']['address2']
-    city = session['metadata']['city']
-    country = session['metadata']['country']
-    postal_code = session['metadata']['postal_code']
-
-    # Create the order
-    basket = Basket(session)
-    total_cost = basket.get_total_price()
-
-    if session['metadata']['user_id']:
-        user = User.objects.get(id=session['metadata']['user_id'])
-        order = Order.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
-            amount_paid=total_cost,
-            user=user
-        )
-    else:
-        order = Order.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
-            amount_paid=total_cost
-        )
-
-    for item in basket:
-        OrderItem.objects.create(
-            order=order,
-            product=item['product'],
-            quantity=item['quantity'],
-            price=item['price']
-        )
-
-    basket.clear()
-
-@csrf_exempt
-def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
-
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
-        )
-    except ValueError as e:
-        # Invalid payload
-        return JsonResponse({'status': 'invalid payload'}, status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return JsonResponse({'status': 'invalid signature'}, status=400)
-
-    # Handle the event
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-        complete_order_logic(session)
-
-    return JsonResponse({'status': 'success'}, status=200)
-
 @csrf_exempt
 def create_checkout_session(request):
     if request.method == 'POST':
@@ -144,6 +76,83 @@ def create_checkout_session(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except ValueError as e:
+        # Invalid payload
+        print("Invalid payload")
+        return JsonResponse({'status': 'invalid payload'}, status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        print("Invalid signature")
+        return JsonResponse({'status': 'invalid signature'}, status=400)
+
+    # Handle the event
+    print("Event type:", event['type'])
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        print("Checkout session completed:", session)
+        complete_order_logic(session)
+
+    return JsonResponse({'status': 'success'}, status=200)
+
+def complete_order_logic(session):
+    # Extract necessary information from the session metadata
+    print("Session Metadata:", session['metadata'])
+    first_name = session['metadata']['first_name']
+    last_name = session['metadata']['last_name']
+    email = session['metadata']['email']
+    address1 = session['metadata']['address1']
+    address2 = session['metadata']['address2']
+    city = session['metadata']['city']
+    country = session['metadata']['country']
+    postal_code = session['metadata']['postal_code']
+
+    # Create the order
+    basket = Basket(session)
+    total_cost = basket.get_total_price()
+    print("Total Cost:", total_cost)
+
+    if session['metadata']['user_id']:
+        user = User.objects.get(id=session['metadata']['user_id'])
+        order = Order.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
+            amount_paid=total_cost,
+            user=user
+        )
+    else:
+        order = Order.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            shipping_address=f"{address1}, {address2}, {city}, {country}, {postal_code}",
+            amount_paid=total_cost
+        )
+
+    for item in basket:
+        print("Creating OrderItem for:", item)
+        OrderItem.objects.create(
+            order=order,
+            product=item['product'],
+            quantity=item['quantity'],
+            price=item['price'],
+            user=user if session['metadata']['user_id'] else None
+        )
+
+    basket.clear()
+    print("Order and OrderItems created successfully")
 
 def payment_success(request):
     return render(request, 'payments/payment-success.html')
