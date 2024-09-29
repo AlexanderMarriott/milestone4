@@ -91,30 +91,5 @@ setTimeout(function() {
 
 
 // Complete checkout
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('form').addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        $.ajax({
-            type: 'POST',
-            url: completeOrderUrl,
-            data: {
-                first_name: $('#first_name').val(),
-                last_name: $('#last_name').val(),
-                email: $('#email').val(),
-                address1: $('#address1').val(),
-                address2: $('#address2').val(),
-                city: $('#city').val(),
-                country: $('#country').val(),
-                postal_code: $('#postal_code').val(),
-                csrfmiddlewaretoken: csrfToken,
-                action: 'post'
-            },
-            success: function(json) {
-                window.location.replace(paymentSuccessUrl);
-            },
-            error: function(xhr, errmsg, err) {
-                window.location.replace(paymentFailedUrl);
-            }
-        });
-    });
-});
+
+
