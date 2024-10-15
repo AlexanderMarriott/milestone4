@@ -1,81 +1,78 @@
 from decimal import Decimal
-
 from shop.models import Product
-
+from .models import Basket as BasketModel
+from django.contrib.auth.models import User
+import copy
 
 class Basket:
-
     def __init__(self, request):
-
         self.session = request.session
+        self.user = request.user if request.user.is_authenticated else None
+        self.basket = self.get_basket()
 
-        # Check if the session key exists
-        basket = self.session.get("sKey")
-        # If the session key does not exist, create a new session key
-        if "sKey" not in request.session:
-            basket = request.session["sKey"] = {}
-
-        self.basket = basket
+    def get_basket(self):
+        if self.user:
+            basket_items = BasketModel.objects.filter(user=self.user)
+            basket = {}
+            for item in basket_items:
+                basket[str(item.product.id)] = {
+                    'price': str(item.product.price),
+                    'quantity': item.quantity
+                }
+            return basket
+        else:
+            return self.session.get('basket', {})
 
     def add(self, product, quantity):
-        product_id = product.id
-
-        # If the product is not in the basket, add it
-        if product_id not in self.basket:
-            self.basket[product_id] = {
-                "price": str(product.price),
-                "quantity": quantity,
-            }
-
-        # If the product is in the basket, update the quantity
+        if self.user:
+            basket_item, created = BasketModel.objects.get_or_create(user=self.user, product=product)
+            if not created:
+                basket_item.quantity += quantity
+            else:
+                basket_item.quantity = quantity
+            basket_item.save()
         else:
-            self.basket[product_id]["quantity"] = quantity
-
-        self.session.modified = True
-
-
-
-
-
-    def delete(self, product):
-        product_id = str(product)
-
-        if product_id in self.basket:
-            del self.basket[product_id]
+            product_id = str(product.id)
+            if product_id not in self.basket:
+                self.basket[product_id] = {'price': str(product.price), 'quantity': quantity}
+            else:
+                self.basket[product_id]['quantity'] += quantity
+            self.session['basket'] = self.basket
             self.session.modified = True
-
 
     def update(self, product, quantity):
-        product_id = str(product)
-        product_quantity = quantity
-        if product_id in self.basket:
-            self.basket[product_id]["quantity"] = product_quantity
-            self.session.modified = True
+        product_id = str(product.id)
+        if self.user:
+            basket_item = BasketModel.objects.get(user=self.user, product=product)
+            basket_item.quantity = quantity
+            basket_item.save()
+        else:
+            if product_id in self.basket:
+                self.basket[product_id]['quantity'] = quantity
+                self.session.modified = True
 
     def __len__(self):
-        return sum(item["quantity"] for item in self.basket.values())
+        return sum(item['quantity'] for item in self.basket.values())
 
     def __iter__(self):
-
         all_product_ids = self.basket.keys()
-
         products = Product.objects.filter(id__in=all_product_ids)
-
-        import copy 
-
         basket = copy.deepcopy(self.basket)
-
         for product in products:
-            basket[str(product.id)]["product"] = product
-
+            basket[str(product.id)]['product'] = product
         for item in basket.values():
-            item["price"] = Decimal(item["price"])
-            item["total_price"] = item["price"] * item["quantity"]
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['quantity']
             yield item
 
     def get_total_price(self):
-        return sum(
-            Decimal(item["price"]) * item["quantity"] for item in self.basket.values()
-        )
+        return sum(Decimal(item['price']) * item['quantity'] for item in self.basket.values())
+
+    def clear(self):
+        if self.user:
+            BasketModel.objects.filter(user=self.user).delete()
+        else:
+            self.session['basket'] = {}
+            self.session.modified = True
     
 

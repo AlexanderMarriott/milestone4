@@ -104,6 +104,12 @@ def create_checkout_session(request):
 
 
 def payment_success(request):
+
+    basket = Basket(request)
+
+    for item in Basket(request):
+        item.clear()
+
     return render(request, 'payments/payment-success.html')
 
 def payment_failed(request): 

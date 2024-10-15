@@ -12,10 +12,11 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from django.contrib.auth.models import auth
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout, login
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
+from basket.basket import Basket
 
 def register(request):
     form = UserAccountForm()
@@ -85,7 +86,11 @@ def my_login(request):
                     request.session.set_expiry(1209600)  # 2 weeks
                 else:
                     request.session.set_expiry(0)  # Browser close
-                auth.login(request, user)
+                login(request, user)
+
+                # Load the user's basket from the database
+                basket = Basket(request)
+                request.session['basket'] = basket.get_basket()
 
                 if user.is_staff:
                     return redirect('/admin/')  # Redirect to admin dashboard
@@ -98,19 +103,26 @@ def my_login(request):
     return render(request, 'useraccount/my-login.html', context=context)
 
 def user_logout(request):
-
     try:
-       
+        # Clear the session-based basket
+        if 'basket' in request.session:
+            del request.session['basket']
+
+        # Clear all other session keys except 'basket'
         for key in list(request.session.keys()):
-            if key == 'sKey':
+            if key == 'basket':
                 continue
             else:
                 del request.session[key]
+
+        # Debug: Print all session keys after clearing
+        print("Session keys after clearing:", list(request.session.keys()))
     except KeyError:
         pass
 
+    # Log out the user
+    logout(request)
     messages.success(request, 'You have been logged out')
-
     return redirect('shop')
 
 @login_required(login_url='my-login')
