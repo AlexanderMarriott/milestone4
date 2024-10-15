@@ -86,7 +86,11 @@ def my_login(request):
                 else:
                     request.session.set_expiry(0)  # Browser close
                 auth.login(request, user)
-                return redirect('dashboard')
+
+                if user.is_staff:
+                    return redirect('/admin/')  # Redirect to admin dashboard
+                else:
+                    return redirect('dashboard')  # Redirect to regular dashboard
             else:
                 form.add_error(None, 'Invalid username or password')
             
@@ -112,6 +116,10 @@ def user_logout(request):
 @login_required(login_url='my-login')
 def dashboard(request):
     return render(request, 'useraccount/dashboard.html')
+
+@login_required(login_url='my-login')
+def admin(request):
+    return render(request, 'admin.html')
 
 @login_required(login_url='my-login')
 def profile_management(request):
