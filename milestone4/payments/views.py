@@ -105,12 +105,7 @@ def create_checkout_session(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
-def payment_success(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-    
-    # Clear the basket
-    basket = Basket(request)
-    basket.clear()
+def payment_success(request):
     
     return render(request, 'payments/payment-success.html', {'order': order})
 
