@@ -23,39 +23,38 @@ def basket_add(request):
         basket.add(product=product, quantity=quantity)
 
         basket_quantity = basket.__len__()
+        basket_total = basket.get_total_price()  # Assuming you have a method to get the total price
 
         # Add success message
         messages.success(request, 'Item successfully added to the cart!')
 
         response = JsonResponse({
             'qty': basket_quantity,
-
-
+            'total': basket_total,
+            'message': 'Item successfully added to the cart!'
         })
         return response
 
     return JsonResponse({"error": "Invalid request"}, status=400)
-
-
 
 def basket_delete(request):
     basket = Basket(request)
 
     if request.POST.get("action") == "post":
         product_id = int(request.POST.get('product_id'))
-
         basket.delete(product_id=product_id)
 
         basket_quantity = basket.__len__()
-        basket_total = basket.get_total_price()
+        basket_total = basket.get_total_price()  # Assuming you have a method to get the total price
 
-        messages.success(request, 'Item successfully removed from cart!')
+        # Add success message
+        messages.success(request, 'Item successfully removed from the cart!')
 
         response = JsonResponse({
             'qty': basket_quantity,
-            'total': basket_total
+            'total': basket_total,
+            'message': 'Item successfully removed from the cart!'
         })
-
         return response
 
     return JsonResponse({"error": "Invalid request"}, status=400)

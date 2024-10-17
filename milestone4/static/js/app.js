@@ -17,12 +17,16 @@ $(document).on('click', '#add-button', function (e) {
             // Update the quantity display without refreshing the page
             document.getElementById('basket-qty').textContent = json.qty;
             document.getElementById('total').textContent = json.total;
-            location.reload(true);
+            setTimeout(function() {
+                location.reload(true);
+            }, 1000);
         },
         error: function (xhr, errmsg, err) {
             console.error(xhr.status + ": " + xhr.responseText);
         }
     });
+
+    
 });
 
 // Delete button

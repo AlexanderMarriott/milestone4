@@ -1,12 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import ShippingAddress, Order, OrderItem
 from basket.basket import Basket
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.models import User
+from weasyprint import HTML
+from django.template.loader import render_to_string
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -103,14 +105,31 @@ def create_checkout_session(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
-def payment_success(request):
-
+def payment_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Clear the basket
     basket = Basket(request)
-
-    for item in Basket(request):
-        item.clear()
-
-    return render(request, 'payments/payment-success.html')
+    basket.clear()
+    
+    return render(request, 'payments/payment-success.html', {'order': order})
 
 def payment_failed(request): 
     return render(request, 'payments/payment-failed.html')
+
+def generate_receipt(request, order_id):
+
+    order = get_object_or_404(Order, id=order_id)
+
+    # Render the receipt template with order details
+    html_string = render_to_string('shop/receipt.html', {'order': order})
+
+    # Generate PDF
+    html = HTML(string=html_string)
+    pdf = html.write_pdf()
+
+    # Create HTTP response
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="receipt_{order_id}.pdf"'
+
+    return response
