@@ -1,95 +1,94 @@
 // app.js
 
 
-// Add button
+// add button
 $(document).on('click', '#add-button', function (e) {
     e.preventDefault();
     $.ajax({
         type: 'POST',
-        url: basketAddUrl,  // Ensure this URL is defined and correct
+        url: basketAddUrl,  // Use a variable for the URL
         data: {
             product_id: $('#add-button').val(),
             quantity: $('#select option:selected').text(),
-            csrfmiddlewaretoken: csrfToken,  // Ensure this token is defined and correct
+            csrfmiddlewaretoken: csrfToken,  // Use a variable for the CSRF token
             action: 'post'
         },
         success: function (json) {
-            // Update the quantity display without refreshing the page
+            //console.log(json);
             document.getElementById('basket-qty').textContent = json.qty;
-            document.getElementById('total').textContent = json.total;
-            setTimeout(function() {
-                location.reload(true);
-            }, 1000);
         },
         error: function (xhr, errmsg, err) {
-            console.error(xhr.status + ": " + xhr.responseText);
+            // Handle error
         }
     });
-
-    
 });
 
-// Delete button
+// delete button
 $(document).on('click', '.delete-button', function (e) {
     e.preventDefault();
     $.ajax({
         type: 'POST',
-        url: basketDeleteUrl,  // Ensure this URL is defined and correct
+        url: basketDeleteUrl,  // Use a variable for the URL
         data: {
             product_id: $(this).data('index'),
-            csrfmiddlewaretoken: csrfToken,  // Ensure this token is defined and correct
+            csrfmiddlewaretoken: csrfToken,  // Use a variable for the CSRF token
             action: 'post'
         },
         success: function (json) {
-            // Update the quantity display without refreshing the page
-            document.getElementById('basket-qty').textContent = json.qty;
-            document.getElementById('total').textContent = json.total;
-            // Optionally, remove the item from the DOM
-            $(`#item-${json.product_id}`).remove();
+            //console.log(json);
+
+           
+           document.getElementById('basket-qty').textContent = json.qty
+           document.getElementById('total').textContent = json.total
+           location.reload()
         },
         error: function (xhr, errmsg, err) {
-            console.error(xhr.status + ": " + xhr.responseText);
+            // Handle error
         }
     });
 });
 
-// Update button
+
+// update button
+
 $(document).on('click', '.update-button', function (e) {
     e.preventDefault();
 
     var theproductid = $(this).data('index');
     $.ajax({
         type: 'POST',
-        url: basketUpdateUrl,  // Ensure this URL is defined and correct
+        url: basketUpdateUrl,  // Use a variable for the URL
         data: {
             product_id: theproductid,
-            product_quantity: $('#select' + theproductid + ' option:selected').text(),
-            csrfmiddlewaretoken: csrfToken,  // Ensure this token is defined and correct
+            product_quantity: $('#select'+theproductid+' option:selected').text(),
+
+            csrfmiddlewaretoken: csrfToken,  // Use a variable for the CSRF token
             action: 'post'
         },
         success: function (json) {
-            // Update the quantity display without refreshing the page
-            document.getElementById('basket-qty').textContent = json.qty;
-            document.getElementById('total').textContent = json.total;
+            //console.log(json);
+
+           
+           
+           document.getElementById('basket-qty').textContent = json.qty;
+           document.getElementById('total').textContent = json.total;
+           location.reload()
         },
         error: function (xhr, errmsg, err) {
-            console.error(xhr.status + ": " + xhr.responseText);
+            // Handle error
         }
     });
 });
 
-// Function to reload the page
-function reloadPage() {
-    location.reload();
-}
 
-// Attach event listener to elements with the .reload class
-document.addEventListener('DOMContentLoaded', function() {
-    const reloadButtons = document.querySelectorAll('.reload');
-    reloadButtons.forEach(function(button) {
-        button.addEventListener('click', reloadPage);
-    });
-});
+// timer for message alerts
+
+var timed_message = document.getElementById('timed-message');
+
+setTimeout(function() {
+    timed_message.style.display = 'none';
+    
+}, 3000);
 
 
 
