@@ -40,15 +40,26 @@ class Basket:
             self.session['basket'] = self.basket
             self.session.modified = True
 
-    def update(self, product, quantity):
-        product_id = str(product.id)
+    def update(self, product_id, quantity):
         if self.user:
+            product = Product.objects.get(id=product_id)
             basket_item = BasketModel.objects.get(user=self.user, product=product)
             basket_item.quantity = quantity
             basket_item.save()
         else:
+            product_id = str(product_id)
             if product_id in self.basket:
                 self.basket[product_id]['quantity'] = quantity
+                self.session.modified = True
+
+    def delete(self, product_id):
+        if self.user:
+            product = Product.objects.get(id=product_id)
+            BasketModel.objects.filter(user=self.user, product=product).delete()
+        else:
+            product_id = str(product_id)
+            if product_id in self.basket:
+                del self.basket[product_id]
                 self.session.modified = True
 
     def __len__(self):

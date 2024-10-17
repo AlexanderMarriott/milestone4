@@ -1,82 +1,78 @@
 // app.js
 
 
-// add button
+// Add button
 $(document).on('click', '#add-button', function (e) {
     e.preventDefault();
     $.ajax({
         type: 'POST',
-        url: basketAddUrl,  // Use a variable for the URL
+        url: basketAddUrl,  // Ensure this URL is defined and correct
         data: {
             product_id: $('#add-button').val(),
             quantity: $('#select option:selected').text(),
-            csrfmiddlewaretoken: csrfToken,  // Use a variable for the CSRF token
+            csrfmiddlewaretoken: csrfToken,  // Ensure this token is defined and correct
             action: 'post'
         },
         success: function (json) {
+            // Update the quantity display without refreshing the page
             document.getElementById('basket-qty').textContent = json.qty;
+            document.getElementById('total').textContent = json.total;
+            location.reload(true);
         },
         error: function (xhr, errmsg, err) {
-            // Handle error
+            console.error(xhr.status + ": " + xhr.responseText);
         }
     });
 });
 
-// delete button
+// Delete button
 $(document).on('click', '.delete-button', function (e) {
     e.preventDefault();
     $.ajax({
         type: 'POST',
-        url: basketDeleteUrl,  // Use a variable for the URL
+        url: basketDeleteUrl,  // Ensure this URL is defined and correct
         data: {
             product_id: $(this).data('index'),
-            csrfmiddlewaretoken: csrfToken,  // Use a variable for the CSRF token
+            csrfmiddlewaretoken: csrfToken,  // Ensure this token is defined and correct
             action: 'post'
         },
         success: function (json) {
-
-           location.reload()
-           
-           document.getElementById('basket-qty').textContent = json.qty
-           document.getElementById('total').textContent = json.total
+            // Update the quantity display without refreshing the page
+            document.getElementById('basket-qty').textContent = json.qty;
+            document.getElementById('total').textContent = json.total;
+            // Optionally, remove the item from the DOM
+            $(`#item-${json.product_id}`).remove();
         },
         error: function (xhr, errmsg, err) {
-            // Handle error
+            console.error(xhr.status + ": " + xhr.responseText);
         }
     });
 });
 
-
-// update button
-
+// Update button
 $(document).on('click', '.update-button', function (e) {
     e.preventDefault();
 
     var theproductid = $(this).data('index');
     $.ajax({
         type: 'POST',
-        url: basketUpdateUrl,  // Use a variable for the URL
+        url: basketUpdateUrl,  // Ensure this URL is defined and correct
         data: {
             product_id: theproductid,
-            product_quantity: $('#select'+theproductid+' option:selected').text(),
-
-            csrfmiddlewaretoken: csrfToken,  // Use a variable for the CSRF token
+            product_quantity: $('#select' + theproductid + ' option:selected').text(),
+            csrfmiddlewaretoken: csrfToken,  // Ensure this token is defined and correct
             action: 'post'
         },
         success: function (json) {
-            //console.log(json);
-
-           location.reload()
-           
-           document.getElementById('basket-qty').textContent = json.qty;
-           document.getElementById('total').textContent = json.total;
+            // Update the quantity display without refreshing the page
+            document.getElementById('basket-qty').textContent = json.qty;
+            document.getElementById('total').textContent = json.total;
         },
         error: function (xhr, errmsg, err) {
-            // Handle error
+            console.error(xhr.status + ": " + xhr.responseText);
         }
     });
 });
-
 
 
 

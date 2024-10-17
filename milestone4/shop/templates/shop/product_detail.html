@@ -1,4 +1,4 @@
-{% extends "./base.html" %}
+{% include "shop/base.html" %}
 
 {% load static %}
 
@@ -100,7 +100,7 @@
 
 
 <script>
-    var basketAddUrl = "{% url 'basket_add' %}";
+    const basketAddUrl = "{% url 'basket_add' %}";
     var csrfToken = "{{ csrf_token }}";
 </script>
 
